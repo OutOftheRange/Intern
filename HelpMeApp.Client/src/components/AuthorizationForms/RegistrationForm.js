@@ -1,10 +1,12 @@
 import { useState, React } from "react";
-import { Formik, Field, Form } from "formik";
+import { Formik, Field, Form, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import routingUrl from "../../constants/routingUrl";
 import Modal from "react-bootstrap/Modal";
 import "bootstrap/dist/css/bootstrap.css";
 import "./AuthorizationForms.css";
+import { RegValidationschema } from "../AuthorizationValidation/RegistrationFormValidation";
+import { LoginValidationschema } from "../AuthorizationValidation/LoginFormValidation";
 
 const RegistrationForm = () => {
   const [registrationData, setRegistrationData] = useState({
@@ -21,7 +23,7 @@ const RegistrationForm = () => {
   return (
     <div className="auth-form">
       <div className="header-button-wrapper">
-        <Link to={routingUrl.pathToLoginPage}>
+        <Link to={routingUrl.pathToHomePage}>
           <button className="other-form-type header-button left-button">
             login
           </button>
@@ -37,48 +39,71 @@ const RegistrationForm = () => {
           email: "",
           password: ""
         }}
+        validationSchema={LoginValidationschema}
         onSubmit={async (values) => {
           setRegistrationData(values);
           handleShow();
         }}
       >
-        <Form className="form">
-          <div className="mb-3 row">
-            <label htmlFor="email" className="col-sm-2 col-form-label up">
-              Email
-            </label>
-            <br />
+        {(formikSmallWindow) => {
+          const { errors, touched, isValid, dirty } = formikSmallWindow;
+          return (
+            <Form className="form">
+              <div className="mb-3 row">
+                <label htmlFor="email" className="col-sm-2 col-form-label up">
+                  Email
+                </label>
 
-            <Field
-              id="email"
-              name="email"
-              placeholder="name@gmail.com"
-              type="email"
-              className="form-control up"
-              required
-            />
-          </div>
+                <Field
+                  id="email"
+                  name="email"
+                  placeholder="name@gmail.com"
+                  type="email"
+                  className={
+                    errors.email && touched.email ? "input-error" : null
+                  }
+                  required
+                />
+              </div>
+              <div className="mb-3 row">
+                <ErrorMessage name="email" component="span" className="error" />{" "}
+              </div>
+              <br />
+              <div className="mb-3 row">
+                <label
+                  htmlFor="password"
+                  className="col-sm-2 col-form-label up"
+                >
+                  Password
+                </label>
+                <Field
+                  id="password"
+                  name="password"
+                  type="password"
+                  className={
+                    errors.password && touched.password ? "input-error" : null
+                  }
+                  required
+                />
+              </div>
+              <div className="mb-3 row">
+                <ErrorMessage
+                  name="password"
+                  component="span"
+                  className="error"
+                />{" "}
+              </div>
 
-          <div className="mb-3 row">
-            <label htmlFor="password" className="col-sm-2 col-form-label up">
-              Password
-            </label>
-            <Field
-              id="password"
-              name="password"
-              type="password"
-              className="form-control up"
-              required
-            />
-          </div>
-          <br />
-          <button
-            className="submit-button horizontal-center btn btn-primary mb-3 up"
-            type="submit"
-          >
-            Next
-          </button>
-        </Form>
+              <button
+                className={!(dirty && isValid) ? "disabled-btn" : ""}
+                disabled={!(dirty && isValid)}
+                type="submit"
+              >
+                Next
+              </button>
+            </Form>
+          );
+        }}
       </Formik>
 
       <Modal show={show} onHide={handleClose}>
@@ -94,6 +119,7 @@ const RegistrationForm = () => {
                 phoneNumber: "",
                 info: ""
               }}
+              validationSchema={RegValidationschema}
               onSubmit={async (values) => {
                 const allData = {
                   email: registrationData.email,
@@ -115,92 +141,134 @@ const RegistrationForm = () => {
                 handleClose();
               }}
             >
-              <Form>
-                <div className="mb-3 row modal-group">
-                  <label htmlFor="name" className="col-sm-2 col-form-label">
-                    Name
-                  </label>
-                  <br />
+              {(formikBigWindow) => {
+                const { errors, touched, isValid, dirty } = formikBigWindow;
+                return (
+                  <Form className="form">
+                    <div className="mb-3 row modal-group">
+                      <label htmlFor="name" className="col-sm-2 col-form-label">
+                        Name
+                      </label>
+                      <br />
 
-                  <Field
-                    id="name"
-                    name="name"
-                    placeholder="John"
-                    type="text"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="mb-3 row modal-group">
-                  <label htmlFor="surname" className="col-sm-2 col-form-label">
-                    Surname
-                  </label>
-                  <br />
+                      <Field
+                        id="name"
+                        name="name"
+                        placeholder="John"
+                        type="text"
+                        className={
+                          errors.name && touched.name ? "input-error" : null
+                        }
+                        required
+                      />
+                    </div>
+                    <div>
+                      <ErrorMessage
+                        name="name"
+                        component="span"
+                        className="error"
+                      />{" "}
+                    </div>
+                    <div className="mb-3 row modal-group">
+                      <label
+                        htmlFor="surname"
+                        className="col-sm-2 col-form-label"
+                      >
+                        Surname
+                      </label>
+                      <br />
 
-                  <Field
-                    id="Surname"
-                    name="Surname"
-                    placeholder="Bobkin"
-                    type="text"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="mb-3 row modal-group">
-                  <label
-                    htmlFor="phoneNumber"
-                    className="col-sm-4 col-form-label"
-                  >
-                    Phone Number
-                  </label>
-                  <br />
+                      <Field
+                        id="surname"
+                        name="surname"
+                        placeholder="Bobkin"
+                        type="text"
+                        className={
+                          errors.surname && touched.surname
+                            ? "input-error"
+                            : null
+                        }
+                        required
+                      />
+                    </div>
+                    <ErrorMessage
+                      name="surname"
+                      component="span"
+                      className="error"
+                    />{" "}
+                    <div className="mb-3 row modal-group">
+                      <label
+                        htmlFor="phoneNumber"
+                        className="col-sm-4 col-form-label"
+                      >
+                        Phone Number
+                      </label>
+                      <br />
 
-                  <Field
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    placeholder="+380000000000"
-                    type="tel"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <div className="mb-3 row modal-group">
-                  <label htmlFor="info" className="col-sm-2 col-form-label">
-                    Info
-                  </label>
-                  <br />
+                      <Field
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        placeholder="+380000000000"
+                        type="tel"
+                        className={
+                          errors.phoneNumber && touched.phoneNumber
+                            ? "input-error"
+                            : null
+                        }
+                        required
+                      />
+                    </div>
+                    <ErrorMessage
+                      name="phoneNumber"
+                      component="span"
+                      className="error"
+                    />{" "}
+                    <div className="mb-3 row modal-group">
+                      <label htmlFor="info" className="col-sm-2 col-form-label">
+                        Info
+                      </label>
+                      <br />
 
-                  <Field
-                    id="info"
-                    name="info"
-                    placeholder="Some info about you"
-                    type="text"
-                    className="form-control"
-                  />
+                      <Field
+                        id="info"
+                        name="info"
+                        placeholder="Some info about you"
+                        type="text"
+                        className={
+                          errors.info && touched.info ? "input-error" : null
+                        }
+                      />
 
-                  <div className="bm-3">
+                      <div className="bm-3">
+                        <br />
+                        <label htmlFor="photo" className="form-label">
+                          Select your photo
+                        </label>
+                        <input
+                          type="file"
+                          id="photo"
+                          name="photo"
+                          accept="image/png, image/jpeg, image/jpg"
+                          /* className={
+                            errors. && touched.p ? "input-error" : null
+                          } */
+                          onChange={(event) => {
+                            setPhoto(event.currentTarget.files[0]);
+                          }}
+                        ></input>
+                      </div>
+                    </div>
                     <br />
-                    <label htmlFor="photo" className="form-label">
-                      Select your photo
-                    </label>
-                    <input
-                      className="form-control"
-                      type="file"
-                      id="photo"
-                      onChange={(event) => {
-                        setPhoto(event.currentTarget.files[0]);
-                      }}
-                    ></input>
-                  </div>
-                </div>
-                <br />
-                <button
-                  type="submit"
-                  className="horizontal-center btn btn-primary mb-1 modal-btn"
-                >
-                  Register
-                </button>
-              </Form>
+                    <button
+                      type="submit"
+                      className={!(dirty && isValid) ? "disabled-btn" : ""}
+                      disabled={!(dirty && isValid)}
+                    >
+                      Register
+                    </button>
+                  </Form>
+                );
+              }}
             </Formik>
           </div>
         </Modal.Body>

@@ -1,3 +1,4 @@
+
 .auth-form {
   min-width: 350px;
   border: 0.2px solid black;
@@ -46,8 +47,15 @@
   border-bottom: 0.4vh solid rgb(232, 232, 232);
 }
 
+
 .form {
   margin: 8vh;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+  
+  justify-content: center;
 }
 
 .submit-button {
